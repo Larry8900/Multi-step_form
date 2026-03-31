@@ -1,0 +1,532 @@
+ :root {
+      --blue:        #483eff;   /* primary accent — buttons, active states */
+      --blue-light:  #bfe2fd;   /* light blue for sidebar step circles */
+      --red:         #ee374a;   /* error / validation colour */
+      --green:       #1fd39d;   /* success / toggle on colour */
+ 
+      /* Neutral palette */
+      --navy:        #02295a;   /* sidebar background */
+      --grey-cool:   #9699ab;   /* placeholder, inactive text */
+      --grey-light:  #d6d9e6;   /* borders */
+      --grey-bg:     #eff5ff;   /* page background */
+      --white:       #ffffff;
+ 
+      /* Typography */
+      --font:        'Ubuntu', sans-serif;
+ 
+      /* Layout */
+      --card-radius: 16px;
+      --sidebar-w:   274px;
+    }
+ 
+    /* ════════════════════════════════════════
+       RESET & BASE
+       ════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    body {
+      font-family: var(--font);
+      background: var(--grey-bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+ 
+    /* ════════════════════════════════════════
+       CARD — the white container
+       ════════════════════════════════════════ */
+    .card {
+      background: var(--white);
+      border-radius: var(--card-radius);
+      box-shadow: 0 24px 64px rgba(2,41,90,0.12);
+      display: flex;
+      width: 100%;
+      max-width: 940px;
+      min-height: 600px;
+      overflow: hidden;
+    }
+ 
+    /* ════════════════════════════════════════
+       SIDEBAR
+       Left panel with step indicators
+       ════════════════════════════════════════ */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--navy);
+ 
+      /* Background image — the hills illustration from the challenge */
+      background-image:
+        url('https://raw.githubusercontent.com/nehalist/multistep-form/main/assets/images/bg-sidebar-desktop.svg');
+      background-size: cover;
+      background-position: center;
+ 
+      padding: 40px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+ 
+    /* Each step indicator row */
+    .sitem {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+ 
+    /* Numbered circle */
+    .snum {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--white);
+      flex-shrink: 0;
+      transition: background 0.25s, border-color 0.25s, color 0.25s;
+    }
+ 
+    /* Active step circle — filled */
+    .sitem.active .snum {
+      background: var(--blue-light);
+      border-color: var(--blue-light);
+      color: var(--navy);
+    }
+ 
+    /* Step label text */
+    .slabel {
+      display: flex;
+      flex-direction: column;
+    }
+    .slabel span:first-child {
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .slabel span:last-child {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+ 
+    /* ════════════════════════════════════════
+       CONTENT AREA — right panel
+       ════════════════════════════════════════ */
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 56px 100px 40px;
+      position: relative;
+    }
+ 
+    /* Individual step panels */
+    .step {
+      display: none;       /* hidden by default */
+      flex-direction: column;
+      flex: 1;
+      animation: fadeIn 0.3s ease both;
+    }
+    .step.active {
+      display: flex;       /* shown when active */
+    }
+ 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+ 
+    /* Step heading */
+    .step-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .step-sub {
+      font-size: 16px;
+      color: var(--grey-cool);
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+ 
+    /* ════════════════════════════════════════
+       STEP 1 — PERSONAL INFO FIELDS
+       ════════════════════════════════════════ */
+    .field {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 22px;
+    }
+    .field-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .field label {
+      font-size: 14px;
+      color: var(--navy);
+      font-weight: 500;
+    }
+    /* Inline validation error message */
+    .field .err {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--red);
+      display: none;   /* shown by JS when invalid */
+    }
+    .field input {
+      border: 1.5px solid var(--grey-light);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: var(--font);
+      font-size: 15px;
+      color: var(--navy);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field input::placeholder { color: var(--grey-cool); }
+    .field input:focus { border-color: var(--blue); }
+    .field input.invalid { border-color: var(--red); }
+ 
+    /* ════════════════════════════════════════
+       STEP 2 — PLAN SELECTION
+       ════════════════════════════════════════ */
+ 
+    /* Monthly / Yearly toggle row */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      background: var(--grey-bg);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 20px;
+    }
+    .toggle-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--grey-cool);
+      transition: color 0.2s;
+    }
+    .toggle-label.active { color: var(--navy); }
+ 
+    /* The toggle switch itself */
+    .toggle {
+      width: 40px;
+      height: 20px;
+      background: var(--navy);
+      border-radius: 100px;
+      position: relative;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .toggle-knob {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--white);
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: left 0.25s;
+    }
+    /* When yearly mode is on, knob slides right */
+    .toggle.yearly .toggle-knob { left: 23px; }
+ 
+    /* Plan cards grid */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+ 
+    .plan-card {
+      border: 1.5px solid var(--grey-light);
+      border-radius: 10px;
+      padding: 20px 16px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+    .plan-card:hover { border-color: var(--blue); }
+    .plan-card.selected {
+      border-color: var(--blue);
+      background: var(--grey-bg);
+    }
+ 
+    /* Plan icon — emoji or image */
+    .plan-icon { font-size: 36px; }
+ 
+    .plan-info .plan-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .plan-info .plan-price {
+      font-size: 14px;
+      color: var(--grey-cool);
+    }
+    /* Free months label (yearly only) */
+    .plan-info .plan-free {
+      font-size: 12px;
+      color: var(--navy);
+      margin-top: 4px;
+      display: none;   /* shown by JS in yearly mode */
+    }
+ 
+    /* ════════════════════════════════════════
+       STEP 3 — ADD-ONS
+       ════════════════════════════════════════ */
+    .addon-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border: 1.5px solid var(--grey-light);
+      border-radius: 10px;
+      padding: 18px 20px;
+      cursor: pointer;
+      margin-bottom: 14px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .addon-card:hover { border-color: var(--blue); }
+    .addon-card.selected {
+      border-color: var(--blue);
+      background: var(--grey-bg);
+    }
+ 
+    /* Custom checkbox */
+    .addon-check {
+      width: 20px;
+      height: 20px;
+      border: 1.5px solid var(--grey-light);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s;
+      font-size: 12px;
+      color: transparent;
+    }
+    .addon-card.selected .addon-check {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: var(--white);
+    }
+ 
+    .addon-text { flex: 1; }
+    .addon-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .addon-desc { font-size: 13px; color: var(--grey-cool); }
+ 
+    .addon-price {
+      font-size: 14px;
+      color: var(--blue);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+ 
+    /* ════════════════════════════════════════
+       STEP 4 — SUMMARY
+       ════════════════════════════════════════ */
+    .summary-box {
+      background: var(--grey-bg);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+ 
+    /* Plan row at the top of the summary */
+    .summary-plan {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--grey-light);
+      margin-bottom: 16px;
+    }
+    .summary-plan-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    /* "Change" link */
+    .summary-change {
+      font-size: 13px;
+      color: var(--grey-cool);
+      text-decoration: underline;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .summary-change:hover { color: var(--blue); }
+ 
+    .summary-plan-price {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+ 
+    /* Each add-on line in the summary */
+    .summary-addon {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .summary-addon span:first-child { color: var(--grey-cool); }
+    .summary-addon span:last-child  { color: var(--navy); font-weight: 500; }
+ 
+    /* Total row */
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .summary-total span:first-child {
+      font-size: 14px;
+      color: var(--grey-cool);
+    }
+    .summary-total-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--blue);
+    }
+ 
+    /* ════════════════════════════════════════
+       THANK YOU SCREEN
+       ════════════════════════════════════════ */
+    .thankyou {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex: 1;
+      gap: 16px;
+      animation: fadeIn 0.4s ease both;
+    }
+    .thankyou.active { display: flex; }
+    .ty-icon { font-size: 64px; margin-bottom: 8px; }
+    .ty-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .ty-text {
+      font-size: 16px;
+      color: var(--grey-cool);
+      max-width: 380px;
+      line-height: 1.6;
+    }
+ 
+    /* ════════════════════════════════════════
+       NAVIGATION BUTTONS
+       at the bottom of the content panel
+       ════════════════════════════════════════ */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 24px;
+    }
+ 
+    .btn-back {
+      background: none;
+      border: none;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--grey-cool);
+      cursor: pointer;
+      padding: 12px 0;
+      transition: color 0.2s;
+    }
+    .btn-back:hover { color: var(--navy); }
+    /* Hidden on step 1 — no going back from the first step */
+    .btn-back.hidden { visibility: hidden; }
+ 
+    .btn-next {
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 500;
+      padding: 14px 28px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      margin-left: auto;
+    }
+    .btn-next:hover {
+      background: #174a8b;
+      transform: translateY(-1px);
+    }
+ 
+    /* Confirm button on step 4 — different colour */
+    .btn-next.confirm {
+      background: var(--green);
+    }
+    .btn-next.confirm:hover { background: #16b588; }
+ 
+    /* ════════════════════════════════════════
+       MOBILE RESPONSIVE
+       ════════════════════════════════════════ */
+    @media (max-width: 700px) {
+ 
+      body { padding: 0; align-items: flex-start; background: var(--grey-bg); }
+ 
+      .card {
+        flex-direction: column;
+        border-radius: 0;
+        box-shadow: none;
+        min-height: 100vh;
+      }
+ 
+      /* Sidebar becomes a top bar on mobile */
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+        padding: 32px 24px;
+        gap: 16px;
+        background-image: url('https://raw.githubusercontent.com/nehalist/multistep-form/main/assets/images/bg-sidebar-mobile.svg');
+        background-size: cover;
+      }
+ 
+      /* Hide text labels on mobile — show numbers only */
+      .slabel { display: none; }
+ 
+      .content {
+        padding: 24px 20px 32px;
+        /* The content floats above the sidebar on mobile in the original,
+           but here we just stack it normally for simplicity */
+      }
+ 
+      .plans-grid { grid-template-columns: 1fr; }
+ 
+      .plan-card { flex-direction: row; gap: 16px; align-items: center; }
+    }
